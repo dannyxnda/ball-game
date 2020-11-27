@@ -1,8 +1,14 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #myCanvas {
-  position: relative;
+  /* position: relative; */
   /* top: 50%; */
-  left: 50%;
-  transform: translateX(-50%);
+  /* left: 50%;
+  transform: translateX(-50%); */
 
   /* width: 520px;
   height: 290px; */

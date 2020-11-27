@@ -4,24 +4,13 @@ const BALL_RADIUS = 5
 canvas.width = 500
 canvas.height = 699
 
-// ctx.beginPath();
-// ctx.rect(20, 40, 50, 50); // coordinates - width/height
-// ctx.fillStyle = "#FF0000";
-// ctx.fill();
-// ctx.closePath();
-
-// ctx.beginPath();
-// ctx.arc(240, 70, 20, 0, Math.PI*2, false);
-// ctx.fillStyle = "green";
-// ctx.stroke();
-// ctx.closePath();
-
 const PADDLE_HEIGHT = 5
-const PADDLE_WIDTH = 50
+const PADDLE_WIDTH = 70
+let PADDLE_SPEED = 5
 let paddleX = (canvas.width - PADDLE_WIDTH) / 2
 
 let x = canvas.width / 2
-let y = canvas.height - PADDLE_HEIGHT
+let y = canvas.height - 2 * PADDLE_HEIGHT
 
 let dx = 5
 let dy = -5
@@ -29,7 +18,14 @@ let dy = -5
 let rightPressed = false
 let leftPressed = false
 
+const increaseSpeed = (currentSpeed) => currentSpeed < 0 && Math.abs(currentSpeed) < 20
+  ? currentSpeed - 0.1
+  : currentSpeed + 0.1
+
+let pressed = false
+
 function keyDownHandler (e) {
+  pressed = true
   if (e.key === 'Right' || e.key === 'ArrowRight') {
     rightPressed = true
   } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
@@ -64,7 +60,12 @@ function drawPaddle () {
   ctx.closePath()
 }
 
+let firstTime = true
+let score = 0
+
 function draw () {
+  if (!pressed && !firstTime) return
+  firstTime = false
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   drawBall()
   drawPaddle()
@@ -77,7 +78,11 @@ function draw () {
     dy = -dy
   } else if (y + dy > canvas.height - BALL_RADIUS) {
     if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
-      dy = -dy
+      dy = -increaseSpeed(dy)
+      dx = increaseSpeed(dx)
+      if (PADDLE_SPEED < 8) PADDLE_SPEED += 0.1
+      score += 1
+      document.getElementById('score').innerHTML = score
     } else {
       alert('GAME OVER')
       document.location.reload()
@@ -87,9 +92,9 @@ function draw () {
 
   // key control
   if (rightPressed && paddleX < canvas.width - PADDLE_WIDTH) {
-    paddleX += 3
+    paddleX += PADDLE_SPEED
   } else if (leftPressed && paddleX > 0) {
-    paddleX -= 3
+    paddleX -= PADDLE_SPEED
   }
 
   x += dx
