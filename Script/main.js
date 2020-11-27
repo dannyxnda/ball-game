@@ -1,6 +1,8 @@
 const canvas = document.getElementById('myCanvas')
 const ctx = canvas.getContext('2d')
-const BALL_RADIUS = 10
+const BALL_RADIUS = 5
+canvas.width = 500
+canvas.height = 699
 
 // ctx.beginPath();
 // ctx.rect(20, 40, 50, 50); // coordinates - width/height
@@ -14,15 +16,15 @@ const BALL_RADIUS = 10
 // ctx.stroke();
 // ctx.closePath();
 
-let x = canvas.width / 2
-let y = canvas.height - 20
-
-let dx = 2
-let dy = -2
-
-const PADDLE_HEIGHT = 10
-const PADDLE_WIDTH = 75
+const PADDLE_HEIGHT = 5
+const PADDLE_WIDTH = 50
 let paddleX = (canvas.width - PADDLE_WIDTH) / 2
+
+let x = canvas.width / 2
+let y = canvas.height - PADDLE_HEIGHT
+
+let dx = 5
+let dy = -5
 
 let rightPressed = false
 let leftPressed = false
@@ -67,26 +69,31 @@ function draw () {
   drawBall()
   drawPaddle()
 
+  // move direction control
   if (x + dx > canvas.width - BALL_RADIUS || x + dx < BALL_RADIUS) {
     dx = -dx
   }
-  if (y + dy > canvas.height - BALL_RADIUS || y + dy < BALL_RADIUS) {
+  if (y + dy < BALL_RADIUS) {
     dy = -dy
+  } else if (y + dy > canvas.height - BALL_RADIUS) {
+    if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
+      dy = -dy
+    } else {
+      alert('GAME OVER')
+      document.location.reload()
+      clearInterval(interval)
+    }
   }
-  if (rightPressed) {
-    paddleX += 5
-    if (paddleX + PADDLE_WIDTH > canvas.width) {
-      paddleX = canvas.width - PADDLE_WIDTH
-    }
-  } else if (leftPressed) {
-    paddleX -= 5
-    if (paddleX < 0) {
-      paddleX = 0
-    }
+
+  // key control
+  if (rightPressed && paddleX < canvas.width - PADDLE_WIDTH) {
+    paddleX += 3
+  } else if (leftPressed && paddleX > 0) {
+    paddleX -= 3
   }
 
   x += dx
   y += dy
 }
 
-setInterval(draw, 10)
+const interval = setInterval(draw, 10)
